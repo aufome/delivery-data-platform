@@ -1,0 +1,87 @@
+[project]
+name = "delivery-data-platform"
+version = "0.1.0"
+description = "End-to-end cloud-native data engineering platform for food delivery analytics"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "aufome" }]
+
+dependencies = [
+    # AWS SDK
+    "boto3>=1.35",
+    # Data processing
+    "pandas>=2.2",
+    "pyarrow>=17.0",
+    # Config management
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "python-dotenv>=1.0",
+    # Kaggle dataset ingestion
+    "kaggle>=1.6",
+    # Structured logging
+    "structlog>=24.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "moto[s3,lambda,iam,athena]>=5.0",
+    "ruff>=0.7",
+    "mypy>=1.13",
+    "boto3-stubs[s3,lambda,iam,athena]>=1.35",
+    "pandas-stubs>=2.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ingestion", "validation", "processing", "config"]
+
+# ── Ruff ────────────────────────────────────────────────────────────────────
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "ANN", # flake8-annotations (type hints)
+]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN"]  # Tests don't require full annotations
+"scripts/**" = ["ANN"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ── Mypy ────────────────────────────────────────────────────────────────────
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = false
+warn_return_any = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["kaggle.*", "structlog.*"]
+ignore_missing_imports = true
+
+# ── Pytest ──────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=. --cov-report=term-missing --cov-report=html -v"

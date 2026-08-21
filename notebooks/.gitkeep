@@ -1,0 +1,2 @@
+# Exploratory notebooks — not production pipeline code.
+# Once logic is proven here, it must be moved into the appropriate Python or dbt module.
