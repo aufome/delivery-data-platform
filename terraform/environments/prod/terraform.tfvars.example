@@ -1,0 +1,26 @@
+# Production environment variable values.
+# Copy this file to terraform.tfvars (gitignored) and fill in your values.
+#
+# WARNING: Production resources incur real costs.
+# Review terraform plan carefully before applying.
+#
+# Recommended: use a remote S3 backend for production state.
+# See the backend block in providers.tf.
+#
+# Usage:
+#   cp environments/prod/terraform.tfvars.example environments/prod/terraform.tfvars
+#   # Edit terraform.tfvars
+#   terraform plan  -var-file=environments/prod/terraform.tfvars
+#   terraform apply -var-file=environments/prod/terraform.tfvars
+
+environment = "prod"
+aws_region  = "eu-central-1"
+aws_profile = "delivery-platform-prod"
+
+# Optional: override the generated bucket names if the defaults are taken.
+# data_lake_bucket_name      = "my-unique-ddp-prod-data-lake"
+# athena_results_bucket_name = "my-unique-ddp-prod-athena-results"
+
+# Lambda settings — production defaults.
+lambda_memory_mb       = 512
+lambda_timeout_seconds = 900

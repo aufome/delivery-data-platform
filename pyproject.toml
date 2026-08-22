@@ -59,8 +59,9 @@ select = [
 ignore = []
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["ANN"]  # Tests don't require full annotations
+"tests/**" = ["ANN"]          # Tests don't require full annotations
 "scripts/**" = ["ANN"]
+"ingestion/lambda_handler.py" = ["ANN401"]  # Lambda events are inherently untyped (typing.Any)
 
 [tool.ruff.format]
 quote-style = "double"

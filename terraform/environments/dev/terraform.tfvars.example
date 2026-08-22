@@ -1,0 +1,21 @@
+# Development environment variable values.
+# Copy this file to terraform.tfvars (gitignored) and fill in your values.
+#
+# Usage:
+#   cp environments/dev/terraform.tfvars.example environments/dev/terraform.tfvars
+#   # Edit terraform.tfvars
+#   terraform plan  -var-file=environments/dev/terraform.tfvars
+#   terraform apply -var-file=environments/dev/terraform.tfvars
+
+environment = "dev"
+aws_region  = "eu-central-1"
+aws_profile = "default"
+
+# Optional: override the generated bucket names if the defaults are taken.
+# S3 bucket names are globally unique across all AWS accounts.
+# data_lake_bucket_name      = "my-unique-ddp-dev-data-lake"
+# athena_results_bucket_name = "my-unique-ddp-dev-athena-results"
+
+# Lambda settings — lower values for dev to reduce cost.
+lambda_memory_mb       = 256
+lambda_timeout_seconds = 300
