@@ -1,57 +1,65 @@
 """
-Lambda ingestion trigger — Phase 3 stub.
+Lambda ingestion trigger.
 
 This handler receives S3 event notifications when a new object lands in
-the raw zone of the data lake. It logs the event and returns a success
-response.
-
-In Phase 7 (Airflow orchestration), this stub will be replaced or extended
-to trigger the full ingestion pipeline — either by starting an Airflow DAG
-run or by calling the ingestion.pipeline module directly.
+the raw zone of the data lake. It triggers the Airflow pipeline via its REST API.
 
 The function is deployed by Terraform using a zip archive of this file.
-It does not depend on any third-party packages so no Lambda layer is needed
-at this stage.
 """
 
+import base64
 import json
 import logging
+import os
+import urllib.request
 from typing import Any
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def handler(event: Any, context: object) -> dict[str, Any]:
+def handler(event: Any, context: Any) -> dict[str, Any]:
     """
-    Lambda entry point.
-
-    Args:
-        event: S3 event payload from the bucket notification.
-        context: Lambda runtime context (not used at this stage).
-
-    Returns:
-        A dict with statusCode 200 and the number of processed S3 records.
+    AWS Lambda handler triggered by S3 ObjectCreated events.
     """
-    logger.info(
-        "Ingestion trigger received",
-        extra={"event_summary": json.dumps(event)[:500]},
-    )
+    airflow_url = os.environ.get("AIRFLOW_API_URL", "http://localhost:8080/api/v1/dags/delivery_data_pipeline/dagRuns")
+    airflow_user = os.environ.get("AIRFLOW_USER", "admin")
+    airflow_pass = os.environ.get("AIRFLOW_PASS", "admin")
 
-    records: list[Any] = event.get("Records", [])
-    logger.info("Processing %d S3 event record(s)", len(records))
+    records = event.get("Records", [])
+    logger.info("ingestion.lambda.triggered", extra={"records_count": len(records)})
+
+    responses = []
 
     for record in records:
-        s3 = record.get("s3", {})
-        bucket = s3.get("bucket", {}).get("name", "unknown")
-        key = s3.get("object", {}).get("key", "unknown")
-        size = s3.get("object", {}).get("size", -1)
-        logger.info(
-            "New S3 object detected",
-            extra={"bucket": bucket, "key": key, "size_bytes": size},
+        bucket = record["s3"]["bucket"]["name"]
+        key = record["s3"]["object"]["key"]
+
+        logger.info("ingestion.lambda.processing_record", extra={"bucket": bucket, "key": key})
+
+        payload = json.dumps({"conf": {"s3_bucket": bucket, "s3_key": key}}).encode("utf-8")
+
+        auth_str = f"{airflow_user}:{airflow_pass}"
+        b64_auth = base64.b64encode(auth_str.encode("utf-8")).decode("ascii")
+
+        req = urllib.request.Request(
+            airflow_url,
+            data=payload,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Basic {b64_auth}"
+            }
         )
+
+        try:
+            with urllib.request.urlopen(req, timeout=5) as response:
+                resp_body = response.read().decode("utf-8")
+                logger.info("ingestion.lambda.airflow_triggered", extra={"status": response.status, "response": resp_body})
+                responses.append({"key": key, "status": response.status})
+        except Exception as e:
+            logger.error("ingestion.lambda.airflow_trigger_failed", extra={"error": str(e), "key": key})
 
     return {
         "statusCode": 200,
-        "body": json.dumps({"processed_records": len(records)}),
+        "body": json.dumps({"message": "Processed S3 events", "results": responses})
     }
