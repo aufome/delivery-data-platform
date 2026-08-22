@@ -22,7 +22,12 @@ variable "environment" {
 }
 
 # ── AWS ───────────────────────────────────────────────────────────────────────
-
+variable "redshift_admin_password" {
+  description = "Admin password for Redshift Serverless cluster"
+  type        = string
+  sensitive   = true
+  default     = "DevPassword123!" # Default for dev ONLY. Prod should inject this.
+}
 variable "aws_region" {
   description = "AWS region for all resources."
   type        = string

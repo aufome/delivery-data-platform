@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: dim_delivery_person
+    description: "Dimension containing courier profile information."
+    columns:
+      - name: courier_id
+        description: "Primary key for the courier dimension."
+        tests:
+          - unique
+          - not_null
+          
+  - name: dim_time
+    description: "Temporal dimension for delivery hours and dates."
+    columns:
+      - name: time_id
+        description: "Surrogate key for time."
+        tests:
+          - unique
+          - not_null
+          
+  - name: dim_geography
+    description: "Spatial dimension defining where the order originated and traffic conditions."
+    columns:
+      - name: geo_id
+        description: "Surrogate key for geography."
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_weather
+    description: "Weather conditions during the delivery."
+    columns:
+      - name: weather_id
+        description: "Surrogate key for weather."
+        tests:
+          - unique
+          - not_null
+
+  - name: fact_deliveries
+    description: "Central fact table containing measures and FKs for every delivery."
+    columns:
+      - name: order_id
+        description: "Primary key of the fact table."
+        tests:
+          - unique
+          - not_null
+      - name: courier_id
+        description: "Foreign key to dim_delivery_person."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_delivery_person')
+                field: courier_id
+      - name: time_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_time')
+                field: time_id
+      - name: geo_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_geography')
+                field: geo_id
+      - name: weather_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_weather')
+                field: weather_id
+      - name: delivery_distance_km
+        description: "Straight line distance in kilometers."
+      - name: delivery_duration_minutes
+        description: "Total time taken for delivery in minutes."

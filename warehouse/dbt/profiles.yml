@@ -1,0 +1,14 @@
+delivery_platform:
+  target: dev
+  outputs:
+    dev:
+      type: redshift
+      host: "{{ env_var('DBT_REDSHIFT_HOST', 'localhost') }}"
+      user: "{{ env_var('DBT_REDSHIFT_USER', 'admin') }}"
+      password: "{{ env_var('DBT_REDSHIFT_PASS', 'DevPassword123!') }}"
+      port: 5439
+      dbname: "{{ env_var('DBT_REDSHIFT_DB', 'dev') }}"
+      schema: "{{ env_var('DBT_REDSHIFT_SCHEMA', 'public') }}"
+      threads: 4
+      keepalives_idle: 240
+      search_path: public
