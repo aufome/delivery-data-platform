@@ -83,13 +83,13 @@ class Settings(BaseSettings):
         description="Kaggle dataset slug (owner/dataset-name).",
     )
 
-    # ── Weather API (Phase 5 — provider TBD) ─────────────────────────────────
+    # ── Weather API (Phase 5 — Open-Meteo) ───────────────────────────────────
     weather_api_key: str | None = Field(
         default=None,
-        description="API key for the historical weather provider (configured in Phase 5).",
+        description="API key for the historical weather provider (not required for free tier Open-Meteo).",
     )
-    weather_api_base_url: str | None = Field(
-        default=None,
+    weather_api_base_url: str = Field(
+        default="https://archive-api.open-meteo.com/v1/archive",
         description="Base URL for the historical weather provider API.",
     )
 
