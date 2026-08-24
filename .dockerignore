@@ -1,0 +1,33 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+htmlcov/
+.coverage
+
+# Local configurations and secrets
+.env
+*.pem
+
+# Data and Models
+data/
+scratch/
+*.joblib
+*.parquet
+*.csv
+*.json
+
+# dbt artifacts
+warehouse/dbt/target/
+warehouse/dbt/dbt_packages/
+warehouse/dbt/logs/
+
+# Terraform artifacts
+terraform/.terraform/
+terraform/terraform.tfstate*
+terraform/*.tfvars
+
+# Mac specific
+.DS_Store
