@@ -1,0 +1,36 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install Dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Run Ruff (Linting & Formatting)
+        run: uv run ruff check .
+
+      - name: Run Mypy (Type Checking)
+        run: uv run mypy .
+
+      - name: Run Pytest (Unit Tests)
+        # Assuming AWS credentials aren't needed for unit tests because of moto
+        run: uv run pytest tests/unit/ -v
