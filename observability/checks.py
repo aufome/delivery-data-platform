@@ -47,7 +47,7 @@ def run_observability_checks(df: pd.DataFrame) -> None:
     # Temperature ranges on Earth shouldn't exceed typical human survivable limits for deliveries
     if "temperature" in df.columns:
         if (df["temperature"] > 60).any() or (df["temperature"] < -50).any():
-            errors.append("Data Drift: Extreme temperature values outside normal planetary limits detected.")
+            errors.append("Data Quality (Anomaly): Extreme temperature values outside normal planetary limits detected.")
 
     if errors:
         for error in errors:

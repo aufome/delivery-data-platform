@@ -199,3 +199,62 @@ resource "aws_glue_catalog_table" "delivery_orders" {
     comment = "Date the file was ingested (YYYY-MM-DD)"
   }
 }
+
+# =============================================================================
+# Glue Data Catalog — Processed Zone Database
+# =============================================================================
+
+resource "aws_glue_catalog_database" "processed" {
+  name        = "${local.name_prefix}_processed_${var.environment}"
+  description = "Glue database for the processed data lake zone. Tables map to S3 Parquet files."
+}
+
+# =============================================================================
+# Glue Catalog Table — enriched_delivery_orders (processed)
+# =============================================================================
+
+resource "aws_glue_catalog_table" "enriched_orders" {
+  name          = "enriched_delivery_orders"
+  database_name = aws_glue_catalog_database.processed.name
+  description   = "Enriched delivery orders in Parquet format."
+
+  table_type = "EXTERNAL_TABLE"
+
+  parameters = {
+    "classification" = "parquet"
+    "EXTERNAL"       = "TRUE"
+  }
+
+  storage_descriptor {
+    location      = "s3://${aws_s3_bucket.data_lake.id}/processed/enriched_delivery_orders/"
+    input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+    output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+
+    ser_de_info {
+      name                  = "ParquetSerDe"
+      serialization_library = "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+    }
+
+    # Due to Parquet's self-describing nature, we don't strictly need to define all columns here
+    # but defining them improves Athena compatibility. We'll rely on crawlers in a real scenario,
+    # but define a few core ones here.
+    columns {
+      name = "id"
+      type = "string"
+    }
+    columns {
+      name = "delivery_duration"
+      type = "double"
+    }
+  }
+
+  partition_keys {
+    name = "source"
+    type = "string"
+  }
+
+  partition_keys {
+    name = "ingestion_date"
+    type = "string"
+  }
+}

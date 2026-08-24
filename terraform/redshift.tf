@@ -73,7 +73,7 @@ resource "aws_redshiftserverless_workgroup" "this" {
 
   # Note: Subnet IDs and Security Group IDs would be specified here in a real VPC environment
   # For demo purposes, AWS will place this in the default VPC if not specified.
-  
+
   tags = {
     Environment = var.environment
     Project     = var.project_name

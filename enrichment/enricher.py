@@ -79,6 +79,16 @@ def enrich_delivery_data(delivery_df: pd.DataFrame, weather_df: pd.DataFrame) ->
         how="left",
         on=["join_date", "join_hour", "req_lat", "req_lon"]
     )
+    
+    # ---------------------------------------------------------
+    # DATA QUALITY: Row Multiplication Check
+    # Ensure the weather join strictly preserves one-to-one cardinality.
+    # ---------------------------------------------------------
+    if len(merged) != len(out):
+        raise ValueError(
+            f"Weather enrichment resulted in row multiplication! "
+            f"Input rows: {len(out)}, Output rows: {len(merged)}"
+        )
 
     # Drop temporary join columns and any internal weather_time column
     cols_to_drop = ["join_date", "req_lat", "req_lon", "join_hour", "weather_time"]

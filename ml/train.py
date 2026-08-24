@@ -151,14 +151,20 @@ def run(
         df = df.dropna(subset=[target_col])
         log.info("ml.data.loaded", rows=len(df), cols=len(df.columns))
 
-        # 2. Split Data
+        # 2. Split Data (Chronological/Temporal Split)
+        # Sort by order_date to ensure we train on past data and test on future data
+        # to prevent data leakage and accurately simulate real-world prediction.
+        if "order_date" in df.columns:
+            df = df.sort_values("order_date")
+            
         X = df.drop(columns=[target_col])
         y = df[target_col]
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
-        log.info("ml.data.split", train_rows=len(X_train), test_rows=len(X_test))
+        split_idx = int(len(df) * 0.8)
+        X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
+        y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
+        
+        log.info("ml.data.split.chronological", train_rows=len(X_train), test_rows=len(X_test))
 
         # 3. Build & Train
         pipeline = build_pipeline()
