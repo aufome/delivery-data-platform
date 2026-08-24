@@ -14,7 +14,7 @@ import pandas as pd
 def parse_weather_json(json_path: Path) -> pd.DataFrame:
     """
     Parse the combined raw JSON responses from Open-Meteo into a flat DataFrame.
-    
+
     The raw JSON contains hourly arrays. This function "unpivots" them so each
     row is a single hour for a specific coordinate.
     """

@@ -28,7 +28,7 @@ def ingest_weather_for_orders(
     """
     Extract unique dates and rounded coordinates from the dataframe, fetch weather,
     and save the combined raw responses to S3.
-    
+
     Returns:
         The path to the local raw JSON file if created, or None if skipped/failed.
     """

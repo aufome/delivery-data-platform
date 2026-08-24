@@ -34,7 +34,7 @@ def fetch_historical_weather(
 ) -> dict[str, Any]:
     """
     Fetch hourly historical weather data for a given coordinate and date range.
-    
+
     Args:
         latitude: Geographic latitude.
         longitude: Geographic longitude.
@@ -42,7 +42,7 @@ def fetch_historical_weather(
         end_date: End date in YYYY-MM-DD format.
         max_retries: Maximum number of retry attempts.
         backoff_factor: Multiplier for exponential backoff.
-        
+
     Returns:
         The raw JSON response parsed into a dict.
     """

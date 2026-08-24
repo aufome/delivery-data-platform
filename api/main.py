@@ -4,9 +4,10 @@ FastAPI application for serving the XGBoost Delivery Duration model.
 
 import os
 import tempfile
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, AsyncGenerator
+from typing import Any
 
 import joblib  # type: ignore
 import pandas as pd
