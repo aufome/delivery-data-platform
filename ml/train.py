@@ -21,7 +21,6 @@ import structlog
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_absolute_error, r2_score, root_mean_squared_error
-from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from xgboost import XGBRegressor
@@ -156,14 +155,14 @@ def run(
         # to prevent data leakage and accurately simulate real-world prediction.
         if "order_date" in df.columns:
             df = df.sort_values("order_date")
-            
+
         X = df.drop(columns=[target_col])
         y = df[target_col]
 
         split_idx = int(len(df) * 0.8)
         X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
         y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
-        
+
         log.info("ml.data.split.chronological", train_rows=len(X_train), test_rows=len(X_test))
 
         # 3. Build & Train

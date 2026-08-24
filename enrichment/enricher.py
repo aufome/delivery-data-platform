@@ -79,7 +79,7 @@ def enrich_delivery_data(delivery_df: pd.DataFrame, weather_df: pd.DataFrame) ->
         how="left",
         on=["join_date", "join_hour", "req_lat", "req_lon"]
     )
-    
+
     # ---------------------------------------------------------
     # DATA QUALITY: Row Multiplication Check
     # Ensure the weather join strictly preserves one-to-one cardinality.
