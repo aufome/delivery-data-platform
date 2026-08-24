@@ -81,5 +81,13 @@ with DAG(
         bash_command="cd /opt/airflow/warehouse/dbt && dbt test --profiles-dir .",
     )
 
+    # 5. ML Training Task
+    # Imports inside function to avoid heavy dependencies on DAG parsing if possible,
+    # or just use BashOperator for complete isolation of dependencies.
+    train_ml = BashOperator(
+        task_id="train_ml_model",
+        bash_command="cd /opt/airflow && uv run python -m ml.train --ingestion-date {{ ds }}",
+    )
+
     # Define the dependency chain
-    ingest_task >> process_task >> enrich_task >> dbt_run >> dbt_test
+    ingest_task >> process_task >> enrich_task >> dbt_run >> dbt_test >> train_ml

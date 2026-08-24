@@ -20,6 +20,9 @@ dependencies = [
     "kaggle>=1.6",
     # Structured logging
     "structlog>=24.4",
+    "xgboost>=3.4.1",
+    "scikit-learn>=1.9.0",
+    "joblib>=1.5.3",
 ]
 
 [project.optional-dependencies]

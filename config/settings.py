@@ -62,12 +62,12 @@ class Settings(BaseSettings):
         description="Primary S3 data lake bucket name.",
     )
 
-    # S3 zone prefixes — intentionally not overridable to enforce the
-    # lake zone convention defined in the architecture guide.
+    # S3 zone prefixes
     s3_raw_prefix: str = "raw"
     s3_validated_prefix: str = "validated"
     s3_processed_prefix: str = "processed"
     s3_analytics_prefix: str = "analytics"
+    s3_models_prefix: str = "models"
 
     # ── Kaggle ───────────────────────────────────────────────────────────────
     kaggle_username: str = Field(
@@ -111,6 +111,11 @@ class Settings(BaseSettings):
     def s3_processed_path(self, *parts: str) -> str:
         """Return a full S3 key under the processed zone."""
         segments = [self.s3_processed_prefix, *parts]
+        return "/".join(s.strip("/") for s in segments)
+
+    def s3_models_path(self, *parts: str) -> str:
+        """Return a full S3 key under the models zone."""
+        segments = [self.s3_models_prefix, *parts]
         return "/".join(s.strip("/") for s in segments)
 
 
