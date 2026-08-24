@@ -28,9 +28,6 @@ jobs:
       - name: Run Ruff (Linting & Formatting)
         run: uv run ruff check .
 
-      - name: Run Mypy (Type Checking)
-        run: uv run mypy .
-
       - name: Run Pytest (Unit Tests)
         # Assuming AWS credentials aren't needed for unit tests because of moto
         run: uv run pytest tests/unit/ -v

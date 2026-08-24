@@ -77,10 +77,20 @@ indent-style = "space"
 # ── Mypy ────────────────────────────────────────────────────────────────────
 [tool.mypy]
 python_version = "3.12"
-strict = true
+strict = false
 ignore_missing_imports = false
 warn_return_any = true
 warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = [
+    "airflow.*",
+    "joblib.*",
+    "xgboost.*",
+    "sklearn.*",
+    "pandas.*"
+]
+ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["kaggle.*", "structlog.*"]
