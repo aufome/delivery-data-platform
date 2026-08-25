@@ -4,7 +4,9 @@ This repository contains an end-to-end data engineering and machine learning pip
 
 It is designed as a batch-processing architecture that demonstrates how to move data from a raw source all the way to a machine learning inference API.
 
-![Architecture Diagram](docs/assets/architecture_diagram.png)
+<p align="center">
+  <img src="docs/assets/architecture_diagram.png" alt="Architecture Diagram" width="800"/>
+</p>
 
 ## Architecture and Technologies
 
